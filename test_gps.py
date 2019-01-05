@@ -24,8 +24,8 @@ def parse_gga(sdata):
 
 
 def parse_rmc(sdata):
-     date = sdata[9]
-     time = sdata[1]
+     date =data[9][0:2] + "/" + sdata[9][2:4] + "/" + sdata[9][4:6]
+     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
      lat = sdata[3]
      lat_dir = sdata[4]
      long = sdata[5]
