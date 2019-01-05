@@ -22,10 +22,22 @@ def parse_gga(sdata):
      return alt
 ######## end of parse gga  ##############
 
-print "Looking for GPS data"
 
+def parse_rmc(sdata):
+     date = sdata[9]
+     time = sdata[1]
+     lat = sdata[3]
+     lat_dir = sdata[4]
+     long = sdata[5]
+     long_dir = sdata[6]
+     
+     return date + " " + time + " " +  lat + " " + lat_dir + " " + long + " " + long_dir
+####### end of parse rmc  ##############
 
 count = 1
+
+
+print "Looking for GPS Data"
 
 while True:
    data = ser.read_until() 
@@ -38,12 +50,13 @@ while True:
    if sdata[0] == "$GPRMC":
        if sdata[2] == 'V':
           print "no satellite data available"
-          date = sdata[9]
-          time = sdata[1]
-          lat = sdata[3]
-          lat_dir = sdata[4]
-          long = sdata[5]
-          long_dir = sdata[6]
+          
+          most_of_gps = parse_rmc(sdata)
+
+          print most_of_gps 
+
+
+
           print count
           count = count + 1
           print alt
