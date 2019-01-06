@@ -18,7 +18,7 @@ ser = serial.Serial(port, baudrate = 57600, timeout = 0.5)
 
 
 def parse_gga(sdata):
-     alt = sdata[7]
+     alt = sdata[9]
      return alt
 ######## end of parse gga  ##############
 
@@ -32,6 +32,7 @@ def parse_rmc(sdata):
      long_dir = sdata[6]
      
      return date + " " + time + " " +  lat + " " + lat_dir + " " + long + " " + long_dir
+     #print  date + " " + time + " " +  lat + " " + lat_dir + " " + long + " " + long_dir
 ####### end of parse rmc  ##############
 
 count = 1
@@ -41,25 +42,28 @@ print "Looking for GPS Data"
 
 while True:
    data = ser.read_until() 
+#   print data
    sdata = data.split(",")
 
    if sdata[0] == "$GPGGA":
        alt = parse_gga(sdata)
+       print alt
 
 
    if sdata[0] == "$GPRMC":
-       if sdata[2] == 'V':
-          print "no satellite data available"
-          
-          most_of_gps = parse_rmc(sdata)
+#       if sdata[2] == 'V':
+#          print "no satellite data available"
+# this would be a great place for an else           
 
+          most_of_gps = parse_rmc(sdata)
           print most_of_gps 
+
 
 
 
           print count
           count = count + 1
-          print alt
+#          print alt
 
 
 
