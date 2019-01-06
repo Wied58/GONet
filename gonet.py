@@ -8,24 +8,24 @@ date = ""
 port = "/dev/serial0"
 ser = serial.Serial(port, baudrate = 57600, timeout = 0.5)
 
-#def lat_long_decode(coord):
-#    #Converts DDDMM.MMMMM > DD deg MM.MMMMM min
-#    x = coord.split(".")
-#    head = x[0]
-#    tail = x[1]
-#    deg = head[0:-2]
-#    min = head[-2:]cd gp
-#
-#    return deg + " deg " + min + "." + tail + " min"
+def lat_long_decode(coord):
+    #Converts DDDMM.MMMMM > DD deg MM.MMMMM min
+    x = coord.split(".")
+    head = x[0]
+    tail = x[1]
+    deg = head[0:-2]
+    min = head[-2:]
+
+    return deg + " deg " + min + "." + tail + " min"
 
 ######## end of lat_long_decode ##############
 
 
 def parse_gga(sdata):
      time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
-     lat = sdata[2]
+     lat = lat_long_decode(sdata[2])
      lat_dir = sdata[3]
-     long = sdata[4]
+     long = lat_long_decode(sdata[4])
      long_dir = sdata[5]
      alt = sdata[9]
 
