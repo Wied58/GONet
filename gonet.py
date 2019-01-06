@@ -2,8 +2,10 @@
 
 import serial
  
-port = "/dev/serial0"
+most_of_gps = ""
+alt = ""
 
+port = "/dev/serial0"
 ser = serial.Serial(port, baudrate = 57600, timeout = 0.5)
 
 #def lat_long_decode(coord):
@@ -35,7 +37,7 @@ def parse_rmc(sdata):
      #print  date + " " + time + " " +  lat + " " + lat_dir + " " + long + " " + long_dir
 ####### end of parse rmc  ##############
 
-count = 1
+
 
 
 print "Looking for GPS Data"
@@ -47,8 +49,6 @@ while True:
 
    if sdata[0] == "$GPGGA":
        alt = parse_gga(sdata)
-       print alt
-
 
    if sdata[0] == "$GPRMC":
 #       if sdata[2] == 'V':
@@ -56,14 +56,13 @@ while True:
 # this would be a great place for an else           
 
           most_of_gps = parse_rmc(sdata)
-          print most_of_gps 
+          break 
 
 
 
 
-          print count
-          count = count + 1
-#          print alt
 
+gps_string =  most_of_gps + " " + alt
+print gps_string
 
 
