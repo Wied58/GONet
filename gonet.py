@@ -51,9 +51,18 @@ while True:
 #   print data 
    sdata = data.split(",")
 
-   if sdata[0] == "$GPGGA":
-       most_of_gps  = parse_gga(sdata)
+#   if sdata[0] == "$GPGGA" and sdata[6] == 0:
+#      print "NO GPS"
+#
+#   else:
 
+      #if sdata[0] == "$GPGGA":
+   if sdata[0] == "$GPGGA" and sdata[6] != 0:
+           most_of_gps  = parse_gga(sdata)
+   else:
+           print "NO GPS"
+           break
+ 
    if sdata[0] == "$GPRMC":
 
           date = parse_rmc(sdata)
