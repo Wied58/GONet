@@ -47,16 +47,14 @@ print "Looking for GPS Data"
 
 while True:
    data = ser.read_until() 
-#   print data
+# Uncomment following line for quick GPS test
+#   print data 
    sdata = data.split(",")
 
    if sdata[0] == "$GPGGA":
        most_of_gps  = parse_gga(sdata)
 
    if sdata[0] == "$GPRMC":
-#       if sdata[2] == 'V':
-#          print "no satellite data available"
-# this would be a great place for an else           
 
           date = parse_rmc(sdata)
           break 
