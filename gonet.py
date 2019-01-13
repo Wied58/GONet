@@ -8,6 +8,8 @@ from PIL import Image, ImageDraw, ImageFont
 most_of_gps = ""
 date = ""
 
+
+
 port = "/dev/serial0"
 ser = serial.Serial(port, baudrate = 57600, timeout = 0.5)
 
@@ -32,15 +34,16 @@ def parse_gga(sdata):
      long_dir = sdata[5]
      alt = sdata[9]
 
-     return time + " " +  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
+     return  " " +  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
 
 ######## end of parse gga  ##############
 
 
 def parse_rmc(sdata):
      date =data[9][0:2] + "/" + sdata[9][2:4] + "/" + sdata[9][4:6]
- 
-     return date
+     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
+
+     return date + ":" + time
 ####### end of parse rmc  ##############
 
 
@@ -55,7 +58,7 @@ while True:
    sdata = data.split(",")
 
    if sdata[0] == "$GPGGA":
-           most_of_gps  = parse_gga(sdata)
+           gps_fix  = parse_gga(sdata)
  
    if sdata[0] == "$GPRMC":
 
@@ -66,7 +69,7 @@ while True:
 
 
 
-gps_string = date + " " + most_of_gps
+gps_string = date + " " + gps_fix
 print gps_string
 
 ser.close()
