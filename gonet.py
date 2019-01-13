@@ -2,11 +2,13 @@
 
 import serial
 import subprocess
+import socket
 import os
+import shutil
 from PIL import Image, ImageDraw, ImageFont
  
-most_of_gps = ""
-date = ""
+gps_fix = ""
+timestamp = ""
 
 
 
@@ -27,7 +29,7 @@ def lat_long_decode(coord):
 
 
 def parse_gga(sdata):
-     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
+#     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
      lat = lat_long_decode(sdata[2])
      lat_dir = sdata[3]
      long = lat_long_decode(sdata[4])
@@ -40,10 +42,13 @@ def parse_gga(sdata):
 
 
 def parse_rmc(sdata):
-     date =data[9][0:2] + "/" + sdata[9][2:4] + "/" + sdata[9][4:6]
-     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
+     date = sdata[9]
+     #date = data[9][0:2] + "-" + sdata[9][2:4] + "-" + sdata[9][4:6]
+     time = sdata[1][0:6]
+     #time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
 
-     return date + ":" + time
+     print date + "_" + time
+     return date + "_" + time
 ####### end of parse rmc  ##############
 
 
@@ -62,14 +67,14 @@ while True:
  
    if sdata[0] == "$GPRMC":
 
-          date = parse_rmc(sdata)
+          timestamp = parse_rmc(sdata)
           break 
 
 
 
 
 
-gps_string = date + " " + gps_fix
+gps_string = timestamp + " " + gps_fix
 print gps_string
 
 ser.close()
@@ -97,6 +102,17 @@ background = Image.open("cam.jpg").convert("RGB")
 foreground = Image.open("foreground.jpg")
 
 background.paste(foreground, (0, 0)) #, foreground)
+newname = "/home/pi/gonet/" + socket.gethostname()[-3:] + "_" + timestamp +".jpg"
+print newname
+
 background.save('composite.jpg', 'JPEG')
+#background.save(filename, 'JPEG')
+#background.save(socket.gethostname()[-3:] + "_" + timestamp + ".jpg", 'JPEG')
+
+
+
+#subprocess.call(["mv", "composite.jpg", _filename])
+
+os.rename('/home/pi/gonet/composite.jpg', newname)
 
 
