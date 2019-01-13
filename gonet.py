@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 import serial
+import subprocess
+import os
+from PIL import Image, ImageDraw, ImageFont
  
 most_of_gps = ""
 date = ""
@@ -65,5 +68,32 @@ while True:
 
 gps_string = date + " " + most_of_gps
 print gps_string
+
+ser.close()
+
+
+#img = Image.new('RGB', (764, 1024), color = (73, 109, 137))
+#img = Image.new('RGBA', (764, 1024), (255, 0, 0, 0))
+img = Image.new('RGB', (1944, 60), color=(255,255,255))
+
+print "gps_string"
+print gps_string
+#data = "Test 12"
+font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",40)
+d = ImageDraw.Draw(img)
+d.text((30,10), gps_string, font=font, fill=(0,0,0))
+img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
+
+
+#os.system('raspistill -v -gps -o cam.jpg > cam.out')
+subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
+
+
+
+background = Image.open("cam.jpg").convert("RGB")
+foreground = Image.open("foreground.jpg")
+
+background.paste(foreground, (0, 0)) #, foreground)
+background.save('composite.jpg', 'JPEG')
 
 
