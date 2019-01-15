@@ -105,14 +105,14 @@ background.paste(foreground, (0, 0)) #, foreground)
 newname = "/home/pi/gonet/" + socket.gethostname()[-3:] + "_" + timestamp +".jpg"
 print newname
 
-background.save('composite.jpg', 'JPEG')
+#background.save('composite.jpg', 'JPEG')
 #background.save(filename, 'JPEG')
-#background.save(socket.gethostname()[-3:] + "_" + timestamp + ".jpg", 'JPEG')
+background.save(socket.gethostname()[-3:] + "_" + timestamp + ".jpg", 'JPEG')
 
 
 
 #subprocess.call(["mv", "composite.jpg", _filename])
 
-os.rename('/home/pi/gonet/composite.jpg', newname)
+#os.rename('/home/pi/gonet/composite.jpg', newname)
 
 
