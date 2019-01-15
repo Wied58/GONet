@@ -30,9 +30,9 @@ def lat_long_decode(coord):
 
 def parse_gga(sdata):
 #     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
-     lat = lat_long_decode(sdata[2])
+     lat = sdata[2]
      lat_dir = sdata[3]
-     long = lat_long_decode(sdata[4])
+     long = sdata[4]
      long_dir = sdata[5]
      alt = sdata[9]
 
@@ -48,13 +48,15 @@ def parse_rmc(sdata):
      #time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
 
      print date + "_" + time
-     return date + "_" + time
+     return date + " " + time
 ####### end of parse rmc  ##############
 
+def convert_raw_timestamp_to_filename_timestamp(raw_timestamp):
+     time_parts = raw_timestamp.split(" ")
+     return time_parts[0] + "_" + time_parts[1]
+######### convert_raw_to_filename ##################
 
-
-
-print "Looking for GPS Data"
+print  "Looking for GPS Data"
 
 while True:
    data = ser.read_until() 
@@ -63,18 +65,18 @@ while True:
    sdata = data.split(",")
 
    if sdata[0] == "$GPGGA":
-           gps_fix  = parse_gga(sdata)
+           raw_gps_fix  = parse_gga(sdata)
  
    if sdata[0] == "$GPRMC":
 
-          timestamp = parse_rmc(sdata)
+          raw_timestamp = parse_rmc(sdata)
           break 
 
 
+filename_timestamp = convert_raw_timestamp_to_filename_timestamp(raw_timestamp)
 
 
-
-gps_string = timestamp + " " + gps_fix
+gps_string = raw_timestamp + " " + raw_gps_fix
 print gps_string
 
 ser.close()
@@ -100,5 +102,5 @@ foreground = Image.open("foreground.jpg")
 
 background.paste(foreground, (0, 0)) #, foreground)
 
-background.save(socket.gethostname()[-3:] + "_" + timestamp + ".jpg", 'JPEG')
+background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG')
 
