@@ -82,37 +82,23 @@ ser.close()
 
 #img = Image.new('RGB', (764, 1024), color = (73, 109, 137))
 #img = Image.new('RGBA', (764, 1024), (255, 0, 0, 0))
-img = Image.new('RGB', (1944, 60), color=(255,255,255))
+img = Image.new('RGB', (1944, 120), color=(255,255,255))
 
 print "gps_string"
 print gps_string
 #data = "Test 12"
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",40)
 d = ImageDraw.Draw(img)
-d.text((30,10), gps_string, font=font, fill=(0,0,0))
+d.text((20,10), "Adler / Far Horizons GONet hostname: " + socket.gethostname(), font=font, fill=(0,0,0))
+d.text((20,70), gps_string, font=font, fill=(0,0,0))
 img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
-
-#os.system('raspistill -v -gps -o cam.jpg > cam.out')
 subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
-
-
 
 background = Image.open("cam.jpg").convert("RGB")
 foreground = Image.open("foreground.jpg")
 
 background.paste(foreground, (0, 0)) #, foreground)
-newname = "/home/pi/gonet/" + socket.gethostname()[-3:] + "_" + timestamp +".jpg"
-print newname
 
-#background.save('composite.jpg', 'JPEG')
-#background.save(filename, 'JPEG')
 background.save(socket.gethostname()[-3:] + "_" + timestamp + ".jpg", 'JPEG')
-
-
-
-#subprocess.call(["mv", "composite.jpg", _filename])
-
-#os.rename('/home/pi/gonet/composite.jpg', newname)
-
 
