@@ -29,10 +29,9 @@ def lat_long_decode(coord):
 
 
 def parse_gga(sdata):
-#     time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
-     lat = sdata[2]
+     lat = lat_long_decode(sdata[2])
      lat_dir = sdata[3]
-     long = sdata[4]
+     long = lat_long_decode(sdata[4])
      long_dir = sdata[5]
      alt = sdata[9]
 
@@ -43,9 +42,7 @@ def parse_gga(sdata):
 
 def parse_rmc(sdata):
      date = sdata[9]
-     #date = data[9][0:2] + "-" + sdata[9][2:4] + "-" + sdata[9][4:6]
      time = sdata[1][0:6]
-     #time = sdata[1][0:2] + ":" + sdata[1][2:4] + ":" + sdata[1][4:6]
 
      print date + "_" + time
      return date + " " + time
@@ -56,6 +53,13 @@ def convert_raw_timestamp_to_filename_timestamp(raw_timestamp):
      return time_parts[0] + "_" + time_parts[1]
 ######### convert_raw_to_filename ##################
 
+
+def  convert_raw_timestamp_to_image_timestamp(raw_timestamp):
+     #180119_214946 DD/MM/YY HH:MM:SS
+     date = raw_timestamp[0:2] + "/" + raw_timestamp[2:4] + "/" + raw_timestamp[4:6]
+     time = raw_timestamp[7:9] + ":" + raw_timestamp[9:11] + ":" + raw_timestamp[11:13]
+     return date + " " + time
+############### end of convert_raw_timestamp_to_filename_timestamp ########################
 print  "Looking for GPS Data"
 
 while True:
@@ -72,14 +76,18 @@ while True:
           raw_timestamp = parse_rmc(sdata)
           break 
 
+ser.close()
 
 filename_timestamp = convert_raw_timestamp_to_filename_timestamp(raw_timestamp)
 
+image_timestamp = convert_raw_timestamp_to_image_timestamp(raw_timestamp)
+print image_timestamp
+
+#image_gps_fix = convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix)
 
 gps_string = raw_timestamp + " " + raw_gps_fix
-print gps_string
 
-ser.close()
+#ser.close()
 
 
 #img = Image.new('RGB', (764, 1024), color = (73, 109, 137))
