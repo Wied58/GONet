@@ -29,13 +29,13 @@ def lat_long_decode(coord):
 
 
 def parse_gga(sdata):
-     lat = lat_long_decode(sdata[2])
+     lat = sdata[2]
      lat_dir = sdata[3]
-     long = lat_long_decode(sdata[4])
+     long = sdata[4]
      long_dir = sdata[5]
      alt = sdata[9]
 
-     return  " " +  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
+     return  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
 
 ######## end of parse gga  ##############
 
@@ -43,8 +43,6 @@ def parse_gga(sdata):
 def parse_rmc(sdata):
      date = sdata[9]
      time = sdata[1][0:6]
-
-     print date + "_" + time
      return date + " " + time
 ####### end of parse rmc  ##############
 
@@ -60,6 +58,20 @@ def  convert_raw_timestamp_to_image_timestamp(raw_timestamp):
      time = raw_timestamp[7:9] + ":" + raw_timestamp[9:11] + ":" + raw_timestamp[11:13]
      return date + " " + time
 ############### end of convert_raw_timestamp_to_filename_timestamp ########################
+
+
+def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
+     #4203.4338 N 08748.7831 W 215.3 M
+     lat = lat_long_decode(raw_gps_fix[0:8])
+     lat_dir = raw_gps_fix[10]
+     long = lat_long_decode(raw_gps_fix[12:21])
+     long_dir = raw_gps_fix[23]
+     alt = raw_gps_fix[25:30]
+
+     return  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
+
+######### end of convert_raw_gps_fix_to_image_gps_fix  ##############
+
 print  "Looking for GPS Data"
 
 while True:
@@ -83,7 +95,8 @@ filename_timestamp = convert_raw_timestamp_to_filename_timestamp(raw_timestamp)
 image_timestamp = convert_raw_timestamp_to_image_timestamp(raw_timestamp)
 print image_timestamp
 
-#image_gps_fix = convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix)
+image_gps_fix = convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix)
+print image_gps_fix
 
 gps_string = raw_timestamp + " " + raw_gps_fix
 
@@ -100,7 +113,7 @@ print gps_string
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",40)
 d = ImageDraw.Draw(img)
 d.text((20,10), "Adler / Far Horizons GONet hostname: " + socket.gethostname(), font=font, fill=(0,0,0))
-d.text((20,70), gps_string, font=font, fill=(0,0,0))
+d.text((20,70), image_timestamp + " " + image_gps_fix, font=font, fill=(0,0,0))
 img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
 subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
