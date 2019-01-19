@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import piexif
 
 import serial
 import subprocess
@@ -116,12 +117,16 @@ d.text((20,10), "Adler / Far Horizons GONet hostname: " + socket.gethostname(), 
 d.text((20,70), image_timestamp + " " + image_gps_fix, font=font, fill=(0,0,0))
 img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
-subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
+#subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
+subprocess.Popen(['raspistill', '-v', '-x', 'GPS.GPSLatitude=-33/1,66/1,451/100', '-x', 'GPS.GPSLongitude=5/1,10/1,15/100', '-o', 'cam.jpg'])
 
 background = Image.open("cam.jpg").convert("RGB")
 foreground = Image.open("foreground.jpg")
 
 background.paste(foreground, (0, 0)) #, foreground)
-
 background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG')
+
+
+
+
 
