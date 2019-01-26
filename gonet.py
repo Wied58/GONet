@@ -5,7 +5,7 @@ import subprocess
 import socket
 import os
 import shutil
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ExifTags
  
 gps_fix = ""
 timestamp = ""
@@ -100,31 +100,35 @@ print image_gps_fix
 
 gps_string = raw_timestamp + " " + raw_gps_fix
 
-#ser.close()
-
-
-#img = Image.new('RGB', (764, 1024), color = (73, 109, 137))
-#img = Image.new('RGBA', (764, 1024), (255, 0, 0, 0))
+#Create image of a white rectangle for test background
 img = Image.new('RGB', (1944, 120), color=(255,255,255))
 
 print "gps_string"
 print gps_string
-#data = "Test 12"
+
+# place black text on white image, rotate and save as foreground.jpg
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",40)
 d = ImageDraw.Draw(img)
 d.text((20,10), "Adler / Far Horizons GONet hostname: " + socket.gethostname(), font=font, fill=(0,0,0))
 d.text((20,70), image_timestamp + " " + image_gps_fix, font=font, fill=(0,0,0))
 img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
+# take a picture with pi cam!
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
 subprocess.Popen(['raspistill', '-v', '-x', 'GPS.GPSLatitude=-33/1,66/1,451/100', '-x', 'GPS.GPSLongitude=5/1,10/1,15/100', '-o', 'cam.jpg'])
 
+# open the the image from pi cam 
 background = Image.open("cam.jpg").convert("RGB")
+
+# save its exif
 exif = background.info['exif']
+
+
+# open foreground.jpg and paste it to pi cam image
 foreground = Image.open("foreground.jpg")
-
 background.paste(foreground, (0, 0)) #, foreground)
-background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG',  exif=exif)
 
+save the new composite image with pi cam photo's exif
+background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG',  exif=exif)
 
 
