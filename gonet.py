@@ -128,12 +128,26 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 # take a picture with pi cam!
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
 
-exif_lat = 42/1,3/10,43/100
 
-subprocess.Popen(['raspistill', '-v', 
-                                '-x', 'GPS.GPSLatitude=42/1,3/10,43/100',
-                                '-x', 'GPS.GPSLongitude=87/1,48/10,78/100', 
-                                '-o', 'cam.jpg'])
+exif_lat = '42/1,03/1,4316/100'
+
+# http://www.ridgesolutions.ie/index.php/2015/03/05/geotag-exif-gps-latitude-field-format/
+#https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
+
+
+#subprocess.Popen(['raspistill', '-v', 
+#                                '-x', 'GPS.GPSLatitude=42/1,3/10,43/100',
+#                                '-x', 'GPS.GPSLongitude=87/1,48/10,78/100', 
+#                                '-o', 'cam.jpg'], shell=True)
+
+
+command = ['raspistill', '-v',
+                         '-x', 'GPS.GPSLatitude=' + exif_lat,
+                         '-x', 'GPSLatitudeRef="N"',
+                         '-x', 'GPS.GPSLongitude=87/1,48/10,78/100',
+                         '-x', 'GPSLongitudeRef=W',
+                         '-o', 'cam.jpg']
+subprocess.Popen(command)
 
 # open the the image from pi cam 
 background = Image.open("cam.jpg").convert("RGB")
