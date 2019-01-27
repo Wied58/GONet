@@ -127,9 +127,12 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
 # take a picture with pi cam!
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
+
+exif_lat = 42/1,3/10,43/100
+
 subprocess.Popen(['raspistill', '-v', 
-                                '-x', 'GPS.GPSLatitude=-33/1,66/1,451/100', 
-                                '-x', 'GPS.GPSLongitude=5/1,10/1,15/100', 
+                                '-x', 'GPS.GPSLatitude=42/1,3/10,43/100',
+                                '-x', 'GPS.GPSLongitude=87/1,48/10,78/100', 
                                 '-o', 'cam.jpg'])
 
 # open the the image from pi cam 
