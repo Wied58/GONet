@@ -140,11 +140,11 @@ exif_lat = '42/1,03/1,4316/100'
 #                                '-x', 'GPS.GPSLongitude=87/1,48/10,78/100', 
 #                                '-o', 'cam.jpg'], shell=True)
 
-
+#08748.77952
 command = ['raspistill', '-v',
                          '-x', 'GPS.GPSLatitude=' + exif_lat,
-                         '-x', 'GPSLatitudeRef="N"',
-                         '-x', 'GPS.GPSLongitude=87/1,48/10,78/100',
+                         '-x', 'GPSLatitudeRef=N',
+                         '-x', 'GPS.GPSLongitude=087/1,48/1,7795/100', 
                          '-x', 'GPSLongitudeRef=W',
                          '-o', 'cam.jpg']
 subprocess.Popen(command)
