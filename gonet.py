@@ -13,7 +13,7 @@ timestamp = ""
 
 
 port = "/dev/serial0"
-ser = serial.Serial(port, baudrate = 57600, timeout = 0.5)
+ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
 
 def lat_long_decode(coord):
     #Converts DDDMM.MMMMM > DD deg MM.MMMMM min
@@ -44,11 +44,13 @@ def parse_rmc(sdata):
      date = sdata[9]
      time = sdata[1][0:6]
      return date + " " + time
+
 ####### end of parse rmc  ##############
 
 def convert_raw_timestamp_to_filename_timestamp(raw_timestamp):
      time_parts = raw_timestamp.split(" ")
      return time_parts[0] + "_" + time_parts[1]
+
 ######### convert_raw_to_filename ##################
 
 
@@ -57,6 +59,7 @@ def  convert_raw_timestamp_to_image_timestamp(raw_timestamp):
      date = raw_timestamp[0:2] + "/" + raw_timestamp[2:4] + "/" + raw_timestamp[4:6]
      time = raw_timestamp[7:9] + ":" + raw_timestamp[9:11] + ":" + raw_timestamp[11:13]
      return date + " " + time
+
 ############### end of convert_raw_timestamp_to_filename_timestamp ########################
 
 
@@ -72,6 +75,11 @@ def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
 
 ######### end of convert_raw_gps_fix_to_image_gps_fix  ##############
 
+#############################################
+######### Start of main program #############
+#############################################
+
+
 print  "Looking for GPS Data"
 
 while True:
@@ -80,15 +88,18 @@ while True:
 #   print data 
    sdata = data.split(",")
 
-   if sdata[0] == "$GPGGA":
-           raw_gps_fix  = parse_gga(sdata)
- 
    if sdata[0] == "$GPRMC":
-
           raw_timestamp = parse_rmc(sdata)
+
+   if sdata[0] == "$GPGGA":
+          raw_gps_fix  = parse_gga(sdata)
           break 
 
 ser.close()
+
+######## done with gps ##############
+
+######## manuipilate gps strings to make them useful ###########
 
 filename_timestamp = convert_raw_timestamp_to_filename_timestamp(raw_timestamp)
 
@@ -100,6 +111,7 @@ print image_gps_fix
 
 gps_string = raw_timestamp + " " + raw_gps_fix
 
+######### done with gps string manipu
 #Create image of a white rectangle for test background
 img = Image.new('RGB', (1944, 120), color=(255,255,255))
 
@@ -128,7 +140,7 @@ exif = background.info['exif']
 foreground = Image.open("foreground.jpg")
 background.paste(foreground, (0, 0)) #, foreground)
 
-save the new composite image with pi cam photo's exif
+#save the new composite image with pi cam photo's exif
 background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG',  exif=exif)
 
 
