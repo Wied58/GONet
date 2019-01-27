@@ -127,7 +127,10 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
 # take a picture with pi cam!
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
-subprocess.Popen(['raspistill', '-v', '-x', 'GPS.GPSLatitude=-33/1,66/1,451/100', '-x', 'GPS.GPSLongitude=5/1,10/1,15/100', '-o', 'cam.jpg'])
+subprocess.Popen(['raspistill', '-v', 
+                                '-x', 'GPS.GPSLatitude=-33/1,66/1,451/100', 
+                                '-x', 'GPS.GPSLongitude=5/1,10/1,15/100', 
+                                '-o', 'cam.jpg'])
 
 # open the the image from pi cam 
 background = Image.open("cam.jpg").convert("RGB")
