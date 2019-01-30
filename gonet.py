@@ -129,7 +129,8 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
 
 
-exif_lat = '42/1,03/1,4316/100'
+exif_lat = '42/1,03/1,25.86/1'
+exif_long = '087/1,48/1,46.9794/1'
 
 # http://www.ridgesolutions.ie/index.php/2015/03/05/geotag-exif-gps-latitude-field-format/
 #https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
@@ -143,9 +144,9 @@ exif_lat = '42/1,03/1,4316/100'
 #08748.77952
 command = ['raspistill', '-v',
                          '-x', 'GPS.GPSLatitude=' + exif_lat,
-                         '-x', 'GPSLatitudeRef=N',
-                         '-x', 'GPS.GPSLongitude=087/1,48/1,7795/100', 
-                         '-x', 'GPSLongitudeRef=W',
+                         '-x', 'GPS.GPSLatitudeRef=' + "N",
+                         '-x', 'GPS.GPSLongitude=' + exif_long, 
+                         '-x', 'GPS.GPSLongitudeRef=' + "W",
                          '-o', 'cam.jpg']
 subprocess.Popen(command)
 
@@ -162,5 +163,5 @@ background.paste(foreground, (0, 0)) #, foreground)
 
 #save the new composite image with pi cam photo's exif
 background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG',  exif=exif)
-
+#background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG')
 
