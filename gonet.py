@@ -85,9 +85,9 @@ def convert_raw_gps_fix_to_exif_lat(raw_gps_fix):
      raw_lat = (raw_gps_fix.split(" "))[0]
      deg = raw_lat[0:2]
      min = raw_lat[2:4]
-     sec = str(int((float(raw_lat[4:9]) * 60.0)))
-     #sec = str((float(raw_lat[4:9]) * 60.0))
-
+     sec = str(int(float(raw_lat[4:9]) * 60.0))
+     #sec = str(float(raw_lat[5:9]) * 60.0 / 10000)
+     #print sec
      return deg + "/1," + min + "/1," + sec + "/1"
 
 ##### end of convert_raw_gps_fix_to_exif_lat #####
