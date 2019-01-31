@@ -28,7 +28,7 @@ def lat_long_decode(coord):
     #return deg + "  " + min + " " + sec + " "
     return deg + u"\u00b0 " + min + "\' " + sec + "\" "
 
-######## end of lat_long_decode ##############
+##### end of lat_long_decode #####
 
 
 def parse_gga(sdata):
@@ -40,30 +40,33 @@ def parse_gga(sdata):
 
      return  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
 
-######## end of parse gga  ##############
+##### end of parse gga #####
 
 
 def parse_rmc(sdata):
      date = sdata[9]
      time = sdata[1][0:6]
+
      return date + " " + time
 
-####### end of parse rmc  ##############
+##### end of parse rmc #####
 
 def convert_raw_timestamp_to_filename_timestamp(raw_timestamp):
      time_parts = raw_timestamp.split(" ")
+
      return time_parts[0] + "_" + time_parts[1]
 
-######### convert_raw_to_filename ##################
+##### convert_raw_to_filename #####
 
 
 def  convert_raw_timestamp_to_image_timestamp(raw_timestamp):
      #180119_214946 DD/MM/YY HH:MM:SS
      date = raw_timestamp[0:2] + "/" + raw_timestamp[2:4] + "/" + raw_timestamp[4:6]
      time = raw_timestamp[7:9] + ":" + raw_timestamp[9:11] + ":" + raw_timestamp[11:13]
+
      return date + " " + time
 
-############### end of convert_raw_timestamp_to_filename_timestamp ########################
+##### end of convert_raw_timestamp_to_filename_timestamp #####
 
 
 def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
@@ -76,7 +79,7 @@ def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
 
      return  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
 
-######### end of convert_raw_gps_fix_to_image_gps_fix  ##############
+##### end of convert_raw_gps_fix_to_image_gps_fix #####
 
 def convert_raw_gps_fix_to_exif_lat(raw_gps_fix):
      raw_lat = (raw_gps_fix.split(" "))[0]
@@ -84,18 +87,24 @@ def convert_raw_gps_fix_to_exif_lat(raw_gps_fix):
      min = raw_lat[2:4]
      sec = str(int((float(raw_lat[4:9]) * 60.0)))
      #sec = str((float(raw_lat[4:9]) * 60.0))
+
      return deg + "/1," + min + "/1," + sec + "/1"
+
+##### end of convert_raw_gps_fix_to_exif_lat #####
 
 def convert_raw_gps_fix_to_exif_long(raw_gps_fix):
      raw_lat = (raw_gps_fix.split(" "))[2]
      deg = raw_lat[0:3]
      min = raw_lat[3:5]
      sec = str(int((float(raw_lat[5:10]) * 60.0)))
+
      return deg + "/1," + min + "/1," + sec + "/1"
 
-#############################################
-######### Start of main program #############
-#############################################
+##### end of convert_raw_gps_fix_to_exif_long #####
+
+#################################
+##### Start of main program #####
+#################################
 
 
 print  "Looking for GPS Data"
@@ -115,9 +124,9 @@ while True:
 
 ser.close()
 
-######## done with gps ##############
+##### done with gps #####
 
-######## manuipilate gps strings to make them useful ###########
+##### manuipilate gps strings to make them useful #####
 
 filename_timestamp = convert_raw_timestamp_to_filename_timestamp(raw_timestamp)
 
@@ -134,7 +143,9 @@ exif_long = convert_raw_gps_fix_to_exif_long(raw_gps_fix)
 
 
 
-######### done with gps string manipu
+##### done with gps string manipulation #####
+
+
 #Create image of a white rectangle for test background
 img = Image.new('RGB', (1944, 120), color=(255,255,255))
 
@@ -155,7 +166,7 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 #exif_long = '087/1,48/1,46.9794/1'
 
 # http://www.ridgesolutions.ie/index.php/2015/03/05/geotag-exif-gps-latitude-field-format/
-#https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
+# https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
 
 
 command = ['raspistill', '-v',
@@ -179,5 +190,4 @@ background.paste(foreground, (0, 0)) #, foreground)
 
 #save the new composite image with pi cam photo's exif
 background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG',  exif=exif)
-#background.save(socket.gethostname()[-3:] + "_" + filename_timestamp + ".jpg", 'JPEG')
 
