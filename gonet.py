@@ -23,10 +23,10 @@ def lat_long_decode(coord):
     tail = x[1]
     deg = head[0:-2]
     min = head[-2:]
-    sec = str((float(tail)/1000) * 60.0)
+    sec = str((float(coord[-6:]) * 60.0))
 
     #return deg + "  " + min + " " + sec + " "
-    return deg + " DEG " + min + " \"" + sec + " \""
+    return deg + u"\u00b0 " + min + "\' " + sec + "\" "
 
 ######## end of lat_long_decode ##############
 
@@ -67,12 +67,12 @@ def  convert_raw_timestamp_to_image_timestamp(raw_timestamp):
 
 
 def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
-     #4203.4338 N 08748.7831 W 215.3 M
-     lat = lat_long_decode(raw_gps_fix[0:8])
-     lat_dir = raw_gps_fix[10]
-     long = lat_long_decode(raw_gps_fix[12:21])
-     long_dir = raw_gps_fix[23]
-     alt = raw_gps_fix[25:30]
+     #4203.4338X N 08748.7831X W 215.3 M
+     lat = lat_long_decode(raw_gps_fix[0:10])
+     lat_dir = raw_gps_fix[11]
+     long = lat_long_decode(raw_gps_fix[13:24])
+     long_dir = raw_gps_fix[25]
+     alt = raw_gps_fix[27:32]
 
      return  lat + " " + lat_dir + " " + long + " " + long_dir + " " + alt + " M"
 
@@ -83,6 +83,7 @@ def convert_raw_gps_fix_to_exif_lat(raw_gps_fix):
      deg = raw_lat[0:2]
      min = raw_lat[2:4]
      sec = str(int((float(raw_lat[4:9]) * 60.0)))
+     #sec = str((float(raw_lat[4:9]) * 60.0))
      return deg + "/1," + min + "/1," + sec + "/1"
 
 def convert_raw_gps_fix_to_exif_long(raw_gps_fix):
@@ -148,7 +149,6 @@ d.text((20,70), image_timestamp + " " + image_gps_fix, font=font, fill=(0,0,0))
 img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 
 # take a picture with pi cam!
-#subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
 
 
 #exif_lat = '42/1,03/1,25.86/1'
@@ -158,12 +158,6 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 #https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
 
 
-#subprocess.Popen(['raspistill', '-v', 
-#                                '-x', 'GPS.GPSLatitude=42/1,3/10,43/100',
-#                                '-x', 'GPS.GPSLongitude=87/1,48/10,78/100', 
-#                                '-o', 'cam.jpg'], shell=True)
-
-#08748.77952
 command = ['raspistill', '-v',
                          '-x', 'GPS.GPSLatitude=' + exif_lat,
                          '-x', 'GPS.GPSLatitudeRef=' + "N",
