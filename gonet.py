@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 import piexif
 import serial
 import subprocess
@@ -16,14 +17,16 @@ port = "/dev/serial0"
 ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
 
 def lat_long_decode(coord):
-    #Converts DDDMM.MMMMM > DD deg MM.MMMMM min
+    #Converts DDDMM.MMMMM > DD  MM' SS.SSS" 
     x = coord.split(".")
     head = x[0]
     tail = x[1]
     deg = head[0:-2]
     min = head[-2:]
+    sec = str((float(tail)/1000) * 60.0)
 
-    return deg + " deg " + min + "." + tail + " min"
+    #return deg + "  " + min + " " + sec + " "
+    return deg + " DEG " + min + " \"" + sec + " \""
 
 ######## end of lat_long_decode ##############
 
@@ -75,6 +78,20 @@ def convert_raw_gps_fix_to_image_gps_fix(raw_gps_fix):
 
 ######### end of convert_raw_gps_fix_to_image_gps_fix  ##############
 
+def convert_raw_gps_fix_to_exif_lat(raw_gps_fix):
+     raw_lat = (raw_gps_fix.split(" "))[0]
+     deg = raw_lat[0:2]
+     min = raw_lat[2:4]
+     sec = str(int((float(raw_lat[4:9]) * 60.0)))
+     return deg + "/1," + min + "/1," + sec + "/1"
+
+def convert_raw_gps_fix_to_exif_long(raw_gps_fix):
+     raw_lat = (raw_gps_fix.split(" "))[2]
+     deg = raw_lat[0:3]
+     min = raw_lat[3:5]
+     sec = str(int((float(raw_lat[5:10]) * 60.0)))
+     return deg + "/1," + min + "/1," + sec + "/1"
+
 #############################################
 ######### Start of main program #############
 #############################################
@@ -111,11 +128,16 @@ print image_gps_fix
 
 gps_string = raw_timestamp + " " + raw_gps_fix
 
+exif_lat = convert_raw_gps_fix_to_exif_lat(raw_gps_fix)
+exif_long = convert_raw_gps_fix_to_exif_long(raw_gps_fix)
+
+
+
 ######### done with gps string manipu
 #Create image of a white rectangle for test background
 img = Image.new('RGB', (1944, 120), color=(255,255,255))
 
-print "gps_string"
+print "gps_string "
 print gps_string
 
 # place black text on white image, rotate and save as foreground.jpg
@@ -129,8 +151,8 @@ img.rotate(90,expand = True).save('foreground.jpg', 'JPEG')
 #subprocess.Popen(['raspistill', '-v',  '-o', 'cam.jpg'])
 
 
-exif_lat = '42/1,03/1,25.86/1'
-exif_long = '087/1,48/1,46.9794/1'
+#exif_lat = '42/1,03/1,25.86/1'
+#exif_long = '087/1,48/1,46.9794/1'
 
 # http://www.ridgesolutions.ie/index.php/2015/03/05/geotag-exif-gps-latitude-field-format/
 #https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
